@@ -40,15 +40,6 @@ export const PRICING: Record<string, ModelPricing> = {
   'gemini-1.5-flash': { input: 0.075, output: 0.3 },
 };
 
-// ─── GitHub Copilot Premium Request Multipliers ──────────────────
-
-export const COPILOT_MULTIPLIERS: Record<string, number> = {
-  'gpt-4.1': 1,
-  'claude-sonnet-4': 1,
-  'o3': 1,
-  'gemini-2.5-pro': 1,
-};
-
 // ─── Cost Calculation ────────────────────────────────────────────
 
 export function calculateCost(

@@ -69,17 +69,7 @@ export const PROVIDER_DEFINITIONS: Record<ProviderType, ProviderDefinition> = {
     description: 'Auto-detect from local JSONL session logs — no key needed',
     isConsumer: false,
   },
-  copilot: {
-    type: 'copilot',
-    displayName: 'GitHub Copilot',
-    icon: '🤖',
-    color: '#1F2937',
-    connectionMethod: 'oauth',
-    dataQuality: 'exact',
-    description: 'Track premium requests via GitHub OAuth',
-    setupUrl: 'https://github.com/settings/copilot',
-    isConsumer: false,
-  },
+
   openclaw: {
     type: 'openclaw',
     displayName: 'OpenClaw',

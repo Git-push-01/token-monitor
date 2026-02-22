@@ -2,7 +2,7 @@
 
 **One dashboard to track every AI token and dollar across all providers.**
 
-Token Monitor is a privacy-first desktop application that gives you real-time visibility into your AI spending across Anthropic, OpenAI, Google Gemini, OpenRouter, Claude Code, GitHub Copilot, and more — all from a single dashboard. Every byte of data stays on your machine.
+Token Monitor is a privacy-first desktop application that gives you real-time visibility into your AI spending across Anthropic, OpenAI, Google Gemini, OpenRouter, Claude Code, and more — all from a single dashboard. Every byte of data stays on your machine.
 
 ---
 
@@ -90,7 +90,7 @@ Token Monitor is a privacy-first desktop application that gives you real-time vi
 2. **File watcher** — Claude Code writes JSONL to `~/.claude/projects/` → `chokidar` watches for changes → parses usage lines → engine ingests
 3. **Browser extension** — Content scripts intercept `fetch` on AI platforms → estimate tokens → send via WebSocket to desktop → engine ingests (quality: `estimated`)
 4. **OpenClaw skill** — After each AI response → HTTP POST to `:7878/api/usage` → engine ingests
-5. **Polling** — OpenAI, OpenRouter, and Copilot adapters poll provider APIs periodically for backfill data
+5. **Polling** — OpenAI and OpenRouter adapters poll provider APIs periodically for backfill data
 
 ---
 
@@ -103,7 +103,6 @@ Token Monitor is a privacy-first desktop application that gives you real-time vi
 | Google Gemini | `gemini_api` | API Key / Proxy | Exact | Reads `usageMetadata` from responses |
 | OpenRouter | `openrouter` | API Key / Proxy | Exact | Uses `x-openrouter-cost` header + generation history polling |
 | Claude Code | `claude_code` | File Watcher | Exact | Watches `~/.claude/projects/` JSONL — no API key needed |
-| GitHub Copilot | `copilot` | OAuth (PAT) | Exact | Polls GitHub API for plan/subscription data |
 | OpenClaw | `openclaw` | Skill (HTTP) | Exact | Receives data from OpenClaw skill via HTTP POST |
 | Claude.ai (Consumer) | `claude_consumer` | Browser Extension | Estimated | Intercepts fetch, estimates from response text |
 | ChatGPT (Consumer) | `chatgpt_consumer` | Browser Extension | Estimated | Intercepts fetch on `/backend-api/conversation` |
@@ -214,7 +213,6 @@ token-monitor/
 │   │   │           ├── gemini.ts
 │   │   │           ├── openrouter.ts
 │   │   │           ├── claude-code.ts
-│   │   │           ├── copilot.ts
 │   │   │           ├── browser-ext.ts
 │   │   │           └── openclaw.ts
 │   │   ├── vite.config.ts
@@ -278,7 +276,7 @@ interface ProviderAdapter {
 Adapters use different strategies:
 - **Proxy intercept** — Anthropic, OpenAI, Gemini, OpenRouter parse response bodies captured by the local proxy
 - **File watching** — Claude Code uses `chokidar` to watch JSONL session logs
-- **API polling** — OpenAI (Usage API every 5 min), OpenRouter (generation history every 30s), Copilot (GitHub API every 5 min)
+- **API polling** — OpenAI (Usage API every 5 min), OpenRouter (generation history every 30s)
 - **Passive receive** — Browser Extension (via WebSocket) and OpenClaw (via HTTP POST)
 
 ### Local Proxy

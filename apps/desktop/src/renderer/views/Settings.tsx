@@ -26,7 +26,6 @@ function ConnectionFlow({
   const needsApiKey = def.connectionMethod === 'api_key' || def.connectionMethod === 'proxy';
   const isFileWatch = def.connectionMethod === 'file_watcher';
   const isExtension = def.connectionMethod === 'browser_extension';
-  const isOAuth = def.connectionMethod === 'oauth';
 
   const handleTest = async () => {
     setTesting(true);
@@ -111,22 +110,6 @@ function ConnectionFlow({
           </div>
         )}
 
-        {isOAuth && (
-          <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg space-y-2">
-            <p className="text-sm font-medium text-purple-700 dark:text-purple-400">GitHub OAuth</p>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              Copilot usage is polled from the GitHub API. Provide a personal access token with <code className="text-xs bg-gray-200 dark:bg-gray-700 px-1 rounded">read:org</code> scope.
-            </p>
-            <input
-              type="password"
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-              placeholder="ghp_..."
-              className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-brand-500 outline-none font-mono text-sm"
-            />
-          </div>
-        )}
-
         {def.setupUrl && (
           <a
             href={def.setupUrl}
@@ -152,7 +135,7 @@ function ConnectionFlow({
 
         {/* Actions */}
         <div className="flex gap-2 pt-2">
-          {(needsApiKey || isOAuth) && (
+          {needsApiKey && (
             <button
               onClick={handleTest}
               disabled={testing || !apiKey}
@@ -163,7 +146,7 @@ function ConnectionFlow({
           )}
           <button
             onClick={handleAdd}
-            disabled={(needsApiKey || isOAuth) && !apiKey}
+            disabled={needsApiKey && !apiKey}
             className="flex-1 px-4 py-2 rounded-lg bg-brand-600 text-white text-sm font-medium hover:bg-brand-700 disabled:opacity-50 transition-colors"
           >
             Add Provider

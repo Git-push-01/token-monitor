@@ -23,7 +23,6 @@ export default {
           gemini: '#4285F4',
           openrouter: '#6D28D9',
           'claude-code': '#F59E0B',
-          copilot: '#1F2937',
           openclaw: '#EF4444',
         },
       },

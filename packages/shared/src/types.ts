@@ -6,7 +6,6 @@ export type ProviderType =
   | 'gemini_api'
   | 'openrouter'
   | 'claude_code'
-  | 'copilot'
   | 'openclaw'
   | 'claude_consumer'
   | 'chatgpt_consumer'
