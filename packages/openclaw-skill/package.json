@@ -1,0 +1,7 @@
+{
+  "name": "@token-monitor/openclaw-skill",
+  "version": "0.1.0",
+  "private": true,
+  "main": "index.js",
+  "description": "OpenClaw skill that forwards token usage events to Token Monitor desktop app"
+}

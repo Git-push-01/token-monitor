@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "outDir": "./dist",
+    "rootDir": ".",
+    "types": ["chrome"],
+    "lib": ["ES2022", "DOM"],
+    "skipLibCheck": true
+  },
+  "include": ["background.ts", "content/**/*.ts", "popup/**/*.ts"]
+}

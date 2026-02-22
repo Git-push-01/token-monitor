@@ -1,0 +1,13 @@
+{
+  "name": "@token-monitor/extension",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc && cp manifest.json dist/ && cp -r popup/*.html dist/popup/ && cp -r icons dist/",
+    "watch": "tsc --watch"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.270",
+    "typescript": "^5.7.0"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "token-monitor",
+  "displayName": "Token Monitor",
+  "description": "Reports token usage events to the Token Monitor desktop app.",
+  "version": "0.1.0",
+  "author": "Token Monitor",
+  "triggers": ["after_response"],
+  "config": {
+    "desktop_port": {
+      "type": "number",
+      "default": 7878,
+      "description": "Port where Token Monitor desktop app is listening"
+    }
+  }
+}

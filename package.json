@@ -1,0 +1,20 @@
+{
+  "name": "token-monitor",
+  "version": "0.1.0",
+  "private": true,
+  "description": "One dashboard to track every AI token and dollar across all providers",
+  "scripts": {
+    "dev": "pnpm --filter @token-monitor/desktop dev",
+    "build": "pnpm --filter @token-monitor/desktop build",
+    "build:ext": "pnpm --filter @token-monitor/extension build",
+    "lint": "eslint . --ext .ts,.tsx",
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "packageManager": "pnpm@9.15.0",
+  "author": "Token Monitor",
+  "license": "MIT"
+}
