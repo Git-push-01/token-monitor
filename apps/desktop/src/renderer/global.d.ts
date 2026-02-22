@@ -3,7 +3,7 @@
 interface ElectronAPI {
   // Providers
   getProviders: () => Promise<any[]>;
-  addProvider: (provider: any) => Promise<void>;
+  addProvider: (provider: any) => Promise<{ id: string; [key: string]: any }>;
   updateProvider: (id: string, data: any) => Promise<void>;
   removeProvider: (id: string) => Promise<void>;
   testProvider: (type: string, apiKey?: string) => Promise<{ ok: boolean; error?: string }>;

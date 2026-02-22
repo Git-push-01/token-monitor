@@ -14,7 +14,7 @@ type Screen = ViewMode | 'onboarding' | 'settings';
 export default function App() {
   const { onboarded, persona, viewMode } = useSettings();
   const { loadProviders } = useProviders();
-  const { handleUsageEvent } = useInstances();
+  const { handleUsageEvent, loadInstances } = useInstances();
   const [screen, setScreen] = useState<Screen>('onboarding');
 
   // Determine initial screen
@@ -26,9 +26,23 @@ export default function App() {
     }
   }, [onboarded, viewMode]);
 
-  // Load saved providers on mount
+  // Load saved providers and instances on mount
   useEffect(() => {
     loadProviders();
+    loadInstances();
+  }, []);
+
+  // Listen for custom 'navigate' events dispatched by child views
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (detail === '/settings') setScreen('settings');
+      else if (detail === '/widget') setScreen('widget');
+      else if (detail === '/grid') setScreen('grid');
+      else if (detail === '/command-center') setScreen('command-center');
+    };
+    window.addEventListener('navigate', handler);
+    return () => window.removeEventListener('navigate', handler);
   }, []);
 
   // Subscribe to real-time usage events from the main process

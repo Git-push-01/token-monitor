@@ -27,13 +27,18 @@ export const useProviders = create<ProvidersState>((set, get) => ({
   addProvider: async (type, name, config) => {
     try {
       const def = PROVIDER_DEFINITIONS[type];
-      const result = await (window as any).electronAPI?.addProvider({
+      if (!window.electronAPI?.addProvider) {
+        console.error('electronAPI.addProvider not available');
+        return null;
+      }
+      const result = await window.electronAPI.addProvider({
         type,
         name: name || def.displayName,
-        config,
+        config: config || {},
         isEstimated: def.isConsumer,
       });
-      if (result) {
+      console.log('addProvider IPC result:', result);
+      if (result && result.id) {
         const provider: Provider = {
           id: result.id,
           type,
@@ -50,6 +55,7 @@ export const useProviders = create<ProvidersState>((set, get) => ({
         set(s => ({ providers: [...s.providers, provider] }));
         return provider;
       }
+      console.error('addProvider returned unexpected result:', result);
     } catch (err) {
       console.error('Failed to add provider:', err);
     }

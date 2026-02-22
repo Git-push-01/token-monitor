@@ -49,8 +49,19 @@ function ConnectionFlow({
   };
 
   const handleAdd = async () => {
-    await addProvider(providerType, def.displayName, apiKey ? { apiKey } : undefined);
-    onClose();
+    try {
+      const result = await addProvider(providerType, def.displayName, apiKey ? { apiKey } : undefined);
+      if (result) {
+        onClose();
+      } else {
+        setStatus('error');
+        setErrorMsg('Failed to add provider. Check the console for details.');
+      }
+    } catch (e: any) {
+      console.error('handleAdd error:', e);
+      setStatus('error');
+      setErrorMsg(e.message || 'Failed to add provider');
+    }
   };
 
   return (
@@ -152,7 +163,7 @@ function ConnectionFlow({
           )}
           <button
             onClick={handleAdd}
-            disabled={needsApiKey && !apiKey && !isFileWatch && !isExtension}
+            disabled={(needsApiKey || isOAuth) && !apiKey}
             className="flex-1 px-4 py-2 rounded-lg bg-brand-600 text-white text-sm font-medium hover:bg-brand-700 disabled:opacity-50 transition-colors"
           >
             Add Provider
