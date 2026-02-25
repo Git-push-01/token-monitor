@@ -4,6 +4,8 @@
 (function () {
   'use strict';
 
+  console.log('[TokenMonitor] ChatGPT content script loaded');
+
   const PROVIDER_TYPE = 'chatgpt_consumer';
 
   const originalFetch = window.fetch;
@@ -15,8 +17,11 @@
 
       // ChatGPT conversation endpoint
       if (url.includes('/backend-api/conversation')) {
+        console.log('[TokenMonitor] Intercepted ChatGPT conversation request:', url);
         const clone = response.clone();
-        processChatGPTResponse(clone, url).catch(() => {});
+        processChatGPTResponse(clone, url).catch((err) => {
+          console.error('[TokenMonitor] Error processing response:', err);
+        });
       }
     } catch {
       // Never break the page
@@ -79,6 +84,7 @@
       // Estimate tokens from response length
       if (fullResponse.length > 0) {
         const estimatedOutput = Math.ceil(fullResponse.length / 4);
+        console.log(`[TokenMonitor] ChatGPT response captured: model=${model}, ~${estimatedOutput} tokens`);
         chrome.runtime.sendMessage({
           type: 'usage_event',
           payload: {

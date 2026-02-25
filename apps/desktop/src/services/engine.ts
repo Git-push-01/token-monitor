@@ -1,11 +1,12 @@
 import type Database from 'better-sqlite3';
-import { BrowserWindow } from 'electron';
+import { BrowserWindow, safeStorage } from 'electron';
 import { EventEmitter } from 'events';
 import { v4 as uuid } from 'uuid';
 import { insertUsageRecord, getSparklineData } from './database';
 import { calculateCost } from '@token-monitor/shared';
 import type { UsageEventV1, ProviderType, Instance } from '@token-monitor/shared';
 import type { WebSocketServer } from 'ws';
+import { ClaudeCodeAdapter } from './adapters/claude-code';
 
 // Adapter interface — every provider adapter implements this
 export interface ProviderAdapter {
@@ -179,9 +180,32 @@ export function startEngine(db: Database.Database, wsServer: WebSocketServer | n
     }
   }
 
+  // Forward reference for adapters that need the engine
+  const engineRef: { current: DataEngine | null } = { current: null };
+
   function addProvider(provider: any) {
-    // Adapter creation happens here — adapters are registered when provider is added
-    // The actual adapter classes are imported and instantiated based on type
+    // Create and start the appropriate adapter
+    let adapter: ProviderAdapter | null = null;
+
+    switch (provider.type as ProviderType) {
+      case 'claude_code':
+        adapter = new ClaudeCodeAdapter(engineRef.current!, provider.id);
+        break;
+      // Proxy-based providers (anthropic_api, openai_api, gemini_api, openrouter)
+      // don't need a dedicated adapter — the proxy server captures their data
+      default:
+        break;
+    }
+
+    if (adapter) {
+      adapters.set(provider.id, adapter);
+      adapter.start().then(() => {
+        console.log(`[Engine] Started ${provider.type} adapter for provider ${provider.id}`);
+      }).catch(err => {
+        console.error(`[Engine] Failed to start ${provider.type} adapter:`, err);
+      });
+    }
+
     emitter.emit('provider:added', provider);
   }
 
@@ -213,7 +237,7 @@ export function startEngine(db: Database.Database, wsServer: WebSocketServer | n
     }
   }
 
-  return {
+  const engine: DataEngine = {
     addProvider,
     removeProvider,
     ingestEvent,
@@ -221,6 +245,16 @@ export function startEngine(db: Database.Database, wsServer: WebSocketServer | n
     testConnection,
     on: (event, listener) => emitter.on(event, listener),
   };
+
+  engineRef.current = engine;
+
+  // Start adapters for any existing providers in the DB
+  const existingProviders = db.prepare('SELECT * FROM providers WHERE status = ?').all('active') as any[];
+  for (const p of existingProviders) {
+    addProvider(p);
+  }
+
+  return engine;
 }
 
 // ─── Connection Test Helpers ─────────────────────────────────────

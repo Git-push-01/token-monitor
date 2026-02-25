@@ -2,6 +2,7 @@ import { ipcMain, safeStorage } from 'electron';
 import type Database from 'better-sqlite3';
 import type { DataEngine } from '../services/engine';
 import { v4 as uuid } from 'uuid';
+import { setPairingToken } from '../services/websocket';
 
 export function registerIpcHandlers(db: Database.Database, engine: DataEngine) {
   // ─── Providers ─────────────────────────────────────────────
@@ -208,6 +209,7 @@ export function registerIpcHandlers(db: Database.Database, engine: DataEngine) {
     db.prepare(
       `INSERT OR REPLACE INTO settings (key, value, updated_at) VALUES ('pairing_token', ?, datetime('now'))`
     ).run(token);
+    setPairingToken(token);
     return token;
   });
 
@@ -216,6 +218,7 @@ export function registerIpcHandlers(db: Database.Database, engine: DataEngine) {
     db.prepare(
       `INSERT OR REPLACE INTO settings (key, value, updated_at) VALUES ('pairing_token', ?, datetime('now'))`
     ).run(token);
+    setPairingToken(token);
     return token;
   });
 

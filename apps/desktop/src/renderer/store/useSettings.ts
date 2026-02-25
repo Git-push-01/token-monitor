@@ -22,7 +22,7 @@ interface SettingsState {
 export const useSettings = create<SettingsState>((set, get) => ({
   persona: 'casual',
   viewMode: 'widget',
-  theme: 'system',
+  theme: 'dark',
   onboarded: false,
   burnRate: {
     minIncrementTokens: 10,
@@ -72,12 +72,12 @@ export const useSettings = create<SettingsState>((set, get) => ({
         set({
           persona: settings.persona || 'casual',
           viewMode: settings.viewMode || 'widget',
-          theme: settings.theme || 'system',
+          theme: settings.theme || 'dark',
           onboarded: settings.onboarded || false,
           burnRate: settings.burnRate || get().burnRate,
         });
         // Apply theme
-        get().setTheme(settings.theme || 'system');
+        get().setTheme(settings.theme || 'dark');
       }
     } catch {
       // Default settings are fine

@@ -37,8 +37,9 @@ export function startWebSocketServer(): WebSocketServer {
     const protocol = req.headers['sec-websocket-protocol'];
     if (protocol) {
       const parts = protocol.split(',').map(s => s.trim());
-      const tokenPart = parts.find(p => p !== 'tokenmonitor.v1');
-      if (tokenPart && pairingToken && tokenPart === pairingToken) {
+      const tokenPart = parts.find(p => p.startsWith('token-monitor-'));
+      const rawToken = tokenPart ? tokenPart.replace('token-monitor-', '') : parts.find(p => p !== 'tokenmonitor.v1');
+      if (rawToken && pairingToken && rawToken === pairingToken) {
         authenticated = true;
         clientId = `ext-${Date.now()}`;
       }
@@ -52,13 +53,13 @@ export function startWebSocketServer(): WebSocketServer {
         if (msg.type === 'handshake') {
           const handshake = msg as WSHandshake;
 
-          if (!pairingToken || handshake.token !== pairingToken) {
+          if (!pairingToken || (handshake.token !== pairingToken && (handshake as any).pairingToken !== pairingToken)) {
             ws.send(JSON.stringify({ type: 'error', message: 'Invalid pairing token' }));
             ws.close(4001, 'Invalid pairing token');
             return;
           }
 
-          clientId = handshake.clientId;
+          clientId = handshake.clientId || `ext-${Date.now()}`;
           authenticated = true;
 
           pairedClients.set(clientId, {

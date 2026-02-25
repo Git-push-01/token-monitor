@@ -7,7 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 import { createTray } from './tray';
 import { registerIpcHandlers } from './ipc';
-import { startWebSocketServer } from '../services/websocket';
+import { startWebSocketServer, setPairingToken } from '../services/websocket';
 import { startProxyServer } from '../services/proxy';
 import { startEngine } from '../services/engine';
 
@@ -55,6 +55,13 @@ app.whenReady().then(async () => {
   // Initialize core services
   const db = initDatabase();
   const wsServer = startWebSocketServer();
+
+  // Load pairing token and configure WebSocket auth
+  const tokenRow = db.prepare('SELECT value FROM settings WHERE key = ?').get('pairing_token') as any;
+  if (tokenRow) {
+    setPairingToken(tokenRow.value);
+  }
+
   const proxyServer = startProxyServer();
   const engine = startEngine(db, wsServer);
 
